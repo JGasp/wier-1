@@ -1,0 +1,5 @@
+.idea
+venv
+report/
+model/GoogleNews-vectors-negative300.bin
+model/GoogleNews-vectors-negative300.bin.gz.zip
