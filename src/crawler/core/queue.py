@@ -1,5 +1,5 @@
 from collections import deque
-from crawler.core.task import WebCrawlTask
+from crawler.core.task import WebPageCrawlTask
 
 
 class TaskQueue:
@@ -8,8 +8,8 @@ class TaskQueue:
         self.website_visited = {}
         self.queue = deque([])
 
-    def add_item(self, item: WebCrawlTask):
-        if item.website not in self.website_visited:  # Skip already visited sites
+    def add_item(self, item: WebPageCrawlTask):
+        if item.url not in self.website_visited:  # Skip already visited sites
             self.queue.append(item)
 
     def get_next(self):
