@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey, TIMESTAMP, Binary, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, TIMESTAMP, Binary, Text, func
 
 Base = declarative_base()
 Base.metadata.schema = 'crawldb'
@@ -34,8 +34,8 @@ class Page(Base):
     page_type_code = Column(String(20))
     url = Column(String(3000), unique=True)
     html_content = Column(Text)
-    html_status_code = Column(Integer)
-    accessed_time = Column(TIMESTAMP)
+    http_status_code = Column(Integer)
+    accessed_time = Column(TIMESTAMP, default=func.current_timestamp())
 
 
 class PageData(Base):
@@ -55,7 +55,7 @@ class Image(Base):
     filename = Column(String(255))
     content_type = Column(String(50))
     data = Column(Binary)
-    accessed_time = Column(TIMESTAMP)
+    accessed_time = Column(TIMESTAMP, default=func.current_timestamp())
 
 
 class Link(Base):

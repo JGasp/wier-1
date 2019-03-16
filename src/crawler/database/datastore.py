@@ -16,6 +16,20 @@ class PostgreSqlDataStore:
         self.session = self.Session()
 
     def persist(self, db_item: Base):
+        self.start_session()
+        self.session.add(db_item)
+
+        db_id = db_item.id
+
+        self.commit()
+        self.close()
+
+        return db_id
+
+    def detach(self, db_item):
+        self.session.expunge(db_item)
+
+    def add(self, db_item: Base):
         self.session.add(db_item)
 
     def close(self):

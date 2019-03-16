@@ -1,15 +1,13 @@
 from urllib.robotparser import RobotFileParser
 
-from crawler.database.tables import Site
-
 
 class SiteMetadata:
-    db_site: Site
+    db_site_id: int
     rp: RobotFileParser
 
-    def __init__(self, db_site, rp):
-        self.db_site = db_site
-        self.rp = range
+    def __init__(self, db_site_id, rp):
+        self.db_site_id = db_site_id
+        self.rp = rp
 
     def can_fetch(self, url):
         if self.rp is not None:
@@ -20,7 +18,7 @@ class SiteMetadata:
 
 class WebPageCrawlTask:
     
-    def __init__(self, url, link_from_url, metadata: SiteMetadata = None):
+    def __init__(self, url, from_site_id: int = None, metadata: SiteMetadata = None):
         self.url = url
-        self.link_from_url = link_from_url
+        self.from_site_id = from_site_id
         self.metadata = metadata
