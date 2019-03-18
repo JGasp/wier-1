@@ -42,7 +42,7 @@ class TaskManager:
             num_of_jobs = multiprocessing.cpu_count()
 
         for i in range(num_of_jobs):
-            job = web_jobs.WebCrawlJob(self, i)
+            job = web_jobs.WebCrawlJob(self)
             job.start()
             self.jobs.append(job)
 
@@ -98,6 +98,11 @@ class TaskManager:
                 sitemap_url = sm.findNext("loc").text
                 if metadata.can_fetch(sitemap_url):
                     self.frontier.add_item(WebPageCrawlTask(sitemap_url, metadata.db_site_id))
+
+            robot_info = ('-' if rp is None else '+') + '[%s]' % robot_url
+            sitemap_info = ('-' if sitemap_tags.__len__() == 0 else '+') + '[%s]' % sitemap_url
+
+            print('> [Job %s] Created entry for site [%s] %s %s' % (threading.get_ident(), domain, robot_info, sitemap_info))
 
             return metadata
 

@@ -30,6 +30,7 @@ def is_url_valid(url):
 
 
 crawlManager = TaskManager(is_url_valid)
+crawlManager.dataStore.clear_db()
 crawlManager.set_frontier(initial_frontier)
-crawlManager.start(num_of_jobs=1)
+crawlManager.start(num_of_jobs=2)
 

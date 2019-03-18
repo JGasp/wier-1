@@ -1,49 +1,27 @@
 from sqlalchemy import create_engine
+from sqlalchemy import text
 from sqlalchemy.orm import sessionmaker
 
 
 from crawler.database.tables import Base
-from crawler.database.tables import Site
 
 
 class PostgreSqlDataStore:
     def __init__(self):
         self.engine = create_engine('postgresql+psycopg2://postgres:root@localhost/crawldb')
         self.Session = sessionmaker(bind=self.engine)
-        self.session = None
-
-    def start_session(self):
-        self.session = self.Session()
 
     def persist(self, db_item: Base):
-        self.start_session()
-        self.session.add(db_item)
+        session = self.Session()
+        session.add(db_item)
 
         db_id = db_item.id
 
-        self.commit()
-        self.close()
+        session.commit()
+        session.close()
 
         return db_id
 
-    def detach(self, db_item):
-        self.session.expunge(db_item)
-
-    def add(self, db_item: Base):
-        self.session.add(db_item)
-
-    def close(self):
-        self.session.close()
-
-    def commit(self):
-        self.session.commit()
-
-    def persist_test(self):
-        self.start_session()
-        site = Site(domain='asd', robots_content='-', sitemap_content='-')
-
-        self.persist(site)
-        self.commit()
-        self.close()
-
-
+    def clear_db(self):
+        sql = text('DELETE FROM crawldb.link; DELETE FROM crawldb.image; DELETE FROM crawldb.page_data; DELETE FROM crawldb.page; DELETE FROM crawldb.site;')
+        result = self.engine.execute(sql)
