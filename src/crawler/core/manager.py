@@ -33,6 +33,8 @@ class TaskManager:
         self.website_visited_hashed_content = {}
         self.url_validation = url_validation
 
+        self.download_additional_content = False
+
     def start(self, num_of_jobs=0):
         if num_of_jobs == 0:
             num_of_jobs = multiprocessing.cpu_count()
@@ -107,6 +109,9 @@ class TaskManager:
 
         domain = url_parsed.netloc
 
+        if 'www.' in domain:
+            domain = domain[4:]
+
         if include_path:
             domain += url_parsed.path
 
@@ -156,7 +161,7 @@ class TaskManager:
                     site_map_res = requests.get(sitemap_url, verify=False, timeout=4)
                     if site_map_res.status_code == 200:
                         site.sitemap_content = str(site_map_res.text)
-                        soup = BeautifulSoup(site.sitemap_content)
+                        soup = BeautifulSoup(site.sitemap_content, "html.parser")
                         sitemap_tags = soup.find_all("loc")
                 except Exception:
                     pass
@@ -184,19 +189,17 @@ class TaskManager:
     def update_web_crawl_task(self, crawl_task, metadata):
         crawl_task.site_id = metadata.site_id
         crawl_task.crawl_at_time = metadata.get_next_crawl_available_in()
-        crawl_task.download_additional_content = self.download_additional_content(crawl_task.url)
 
     def build_new_task(self, crawl_task: WebPageCrawlTask):
         cannon_url = self.get_canonized_url(crawl_task.url, include_path=True)
         if cannon_url not in self.visited_pages:
             if self.is_valid_file(crawl_task.url):
                 crawl_task.type = 'BINARY'
-                crawl_task.download_additional_content = self.download_additional_content(crawl_task.from_page_url)
 
-                if not crawl_task.download_additional_content:
-                    return None
-                else:
+                if self.download_additional_content:
                     return crawl_task
+                else:
+                    return None
 
             elif self.url_validation(crawl_task.url):
                 site_metadata, site_map_crawl_tasks = self.get_site_metadata(crawl_task.url)
@@ -209,7 +212,6 @@ class TaskManager:
 
                     crawl_task.site_id = site_metadata.site_id
                     crawl_task.crawl_at_time = site_metadata.get_next_crawl_available_in()
-                    crawl_task.download_additional_content = self.download_additional_content(crawl_task.url)
 
                     return crawl_task
         else:
@@ -245,13 +247,6 @@ class TaskManager:
         else:
             with self.lock:
                 self.thread_sleeping += 1
-
-    def download_additional_content(self, url):
-        if url is not None:
-            for u in self.initial_seed:
-                if url.startswith(u):
-                    return True
-        return False
 
     def check_if_jobs_completed_and_frontier_empty(self):
         if self.frontier.queue.__len__() == 0:

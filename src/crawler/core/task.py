@@ -36,7 +36,6 @@ class WebPageCrawlTask:
         self.from_page_url = from_page_url
 
         self.crawl_at_time = crawl_at_time
-        self.download_additional_content = False
 
         self.site_map_crawl_tasks = None
 

@@ -79,11 +79,10 @@ class WebCrawlJob(threading.Thread):
 
             self.manager.handle_crawl_results(crawl_results, crawl_task)
 
-    @staticmethod
-    def download_binary_file(crawl_results, crawl_task):
+    def download_binary_file(self, crawl_results, crawl_task):
         crawl_results.page.page_type_code = 'BINARY'
 
-        if crawl_task.download_additional_content:
+        if self.manager.download_additional_content:
             crawl_results.page_data = PageData()
             crawl_results.page_data.data_type_code = crawl_task.url[crawl_task.url.rfind('.'):]
 
@@ -136,7 +135,7 @@ class WebCrawlJob(threading.Thread):
 
     def parse_and_download_images(self, crawl_results, crawl_task):
         images_src = []
-        if crawl_task.download_additional_content:
+        if self.manager.download_additional_content:
             try:
                 images = self.web_driver.find_elements_by_tag_name('img')
                 for i in images:
