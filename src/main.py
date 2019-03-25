@@ -26,11 +26,14 @@ initial_frontier = [
 
 def is_url_valid(url):
     parsed_url = urlparse(url)
-    return parsed_url.netloc.endswith('.gov.si')
+    # return parsed_url.netloc.endswith('.gov.si')
+
+    return parsed_url.netloc.endswith('evem.gov.si') or parsed_url.netloc.endswith('e-uprava.gov.si') or \
+        parsed_url.netloc.endswith('podatki.gov.si') or parsed_url.netloc.endswith('e-prostor.gov.si')
 
 
 crawlManager = TaskManager(is_url_valid)
-crawlManager.dataStore.clear_db()
+crawlManager.data_store.clear_db()
 crawlManager.set_frontier(initial_frontier)
 crawlManager.start(num_of_jobs=2)
 

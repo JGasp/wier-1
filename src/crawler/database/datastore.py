@@ -14,10 +14,12 @@ class PostgreSqlDataStore:
     def persist(self, db_item: Base):
         session = self.Session()
         session.add(db_item)
-
-        db_id = db_item.id
-
         session.commit()
+
+        db_id = None
+        if hasattr(db_item, 'id'):
+            db_id = db_item.id
+
         session.close()
 
         return db_id

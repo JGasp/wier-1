@@ -60,7 +60,5 @@ class Image(Base):
 
 class Link(Base):
     __tablename__ = 'link'
-
-    id = Column(Integer, primary_key=True)
-    from_page = Column(Integer, ForeignKey('page.id'))
-    to_page = Column(Integer, ForeignKey('page.id'))
+    from_page = Column(Integer, ForeignKey('page.id'), primary_key=True)
+    to_page = Column(Integer, ForeignKey('page.id'), primary_key=True)
