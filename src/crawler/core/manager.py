@@ -93,8 +93,6 @@ class TaskManager:
                 page_data = crawl_results.page_data
                 page_data.page_id = page_id
                 self.data_store.persist(page_data)
-            else:
-                print("WTF")
 
             if crawl_task.from_page_id is not None:
                 link = Link()

@@ -131,7 +131,7 @@ class WebCrawlJob(threading.Thread):
                 if 'document.location' in click_event or 'location.href' in click_event:
                     url = click_event.split('=')[1]
                     self.add_link(url, crawl_results, crawl_task)
-            except StaleElementReferenceException:
+            except Exception:
                 pass
 
     def parse_and_download_images(self, crawl_results, crawl_task):
